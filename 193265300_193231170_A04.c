@@ -54,9 +54,10 @@ int main(int argc, void *argv[]){
  return -1;
  }
  else{
- for (int i = 1; i < argc; i++){
- totalAvailable[i] = atoi(argv[i]);
- }
+  printf("\n Project made by Kush Rabadia and Aryan Amin\n");
+  for (int i = 1; i < argc; i++){
+  totalAvailable[i] = atoi(argv[i]);
+  }
  }
  int customerCount = readFile(FILENAME, &customerMaximum);
 
