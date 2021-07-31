@@ -21,7 +21,7 @@ GitHub Username: KushRabadia
 #include <sys/stat.h>
 #include <time.h>
 
-const char *FILENAME = "sample4_in.txt";
+char *FILENAME = "sample4_in.txt";
 
 typedef struct customer{
  int customerID;
@@ -48,13 +48,15 @@ void outputValues(int numOfCustomers);
 void runBankerAlgo(int numOfCustomers);
 void *runThread(void *thread);
 
-int main(int argc, void *argv[]){
+int i;
+
+int main(int argc, char *argv[]){
  if (argc < 5){
- printf("Not enough parameters passed");
+ printf("Not enough parameters passed\n");
  return -1;
  }
  else{
-  printf("\n Project made by Kush Rabadia and Aryan Amin\n");
+  printf("Project made by Kush Rabadia and Aryan Amin\n");
   for (int i = 1; i < argc; i++){
   totalAvailable[i] = atoi(argv[i]);
   }
@@ -81,75 +83,198 @@ int main(int argc, void *argv[]){
  customerNeed[i].type4 = customerMaximum[i].type4;
  }
  
- printf("Number of Customers: %d", customerCount);
+ printf("Number of Customers: %d\n", customerCount);
 
- printf("Currenlty Available resources: %d %d %d %d", totalAvailable[1], totalAvailable[2], totalAvailable[3], totalAvailable[4]);
+ printf("Currenlty Available resources: %d %d %d %d\n", totalAvailable[1], totalAvailable[2], totalAvailable[3], totalAvailable[4]);
 
- printf("Maximum Resources from file:");
+ printf("Maximum Resources from file:\n");
 
  for (int j = 0; j < customerCount; j++){
- printf("%d %d %d %d", customerMaximum[j].type1, customerMaximum[j].type2, customerMaximum
+ printf("%d %d %d %d\n", customerMaximum[j].type1, customerMaximum[j].type2, customerMaximum
  [j].type3, customerMaximum[j].type4);
  }
 
  char command[100];
 
- while(1){
- printf("Enter Command ('Exit' to Exit Program):");
- fgets(command, 100, stdin);
+ char cmd[2];
+	int threadID=-1;
+	int type1=-1;
+	int type2=-1;
+	int type3=-1;
+	int type4=-1;
 
- char *request = strstr(command, "RQ");
- char *release = strstr(command, "RL");
- char *status = strstr(command, "Status");
- char *exit = strstr(command, "Exit");
- char *run = strstr(command, "Run");
+	
+	do {
+        
+		printf("Enter Command 'exit' to Exit:");
+		fgets(command,100,stdin);
 
- if (request != NULL){
- printf("Call request function");
- }
- else if (release != NULL){
- printf("Call release function");
- }
- else if (status != NULL){
- printf("Call status function");
- }
- else if (exit != NULL){
- printf("Exiting from the program");
- break;
- }
- else if (run != NULL){
- printf("Call the run function");
- }
- else{
- printf("No command found. Please try RQ, RL, Run or Exit");
- }
- }
+
+		char *ptr = strtok(command, " ");
+
+		strcpy(cmd,ptr);
+
+		int j =0;
+		while(ptr!=NULL)
+		{
+			switch(j){
+				case 1:
+					threadID = atoi(ptr);
+					break;
+				case 2:
+					type1 = atoi(ptr);
+					break;
+				case 3:
+					type2 = atoi(ptr);
+					break;
+				case 4:
+					type3 = atoi(ptr);
+					break;
+				default:
+					type4 = atoi(ptr);
+			}
+			
+			j++;
+			ptr = strtok(NULL," ");
+		}
+		
+		if (strstr(cmd,"RQ")!=NULL)
+		{
+			printf("process request function\n");
+			/*
+			do something
+			*/
+			printf("You have entered: %s %d %d %d %d %d \n\n", cmd, threadID, type1,type2,type3,type4);
+			allocateResources(threadID,type1,type2,type3,type4,customerCount);
+			
+
+		}
+		else if(strstr(cmd,"RL")!=NULL)
+		{
+			printf("process release function\n");
+			/*
+			do something
+			*/
+
+			printf("You have entered: %s %d %d %d %d %d \n\n", cmd, threadID, type1,type2,type3,type4);
+			releaseResources(threadID,type1,type2,type3,type4);
+		}
+		else if(strstr(cmd,"*")!=NULL)
+		{
+			printf("process/display current state\n");
+			/*
+			do something
+			*/
+			printf("You have entered: %s\n\n", cmd);
+			outputValues(customerCount);
+
+		}
+		else if(strstr(cmd,"RUN")!=NULL)
+		{
+			printf("run function\n");
+			/*
+			do something
+			*/
+
+			printf("You have entered: %s\n\n", cmd);
+			runBankerAlgo(customerCount);
+		}		
+		else if(strstr(cmd,"exit")!=NULL)
+		{
+			printf("See you later!\n");
+			break;
+		}
+		else
+		{
+			printf("invalid command try inputting 'RQ, RL, * or RUN' [Case Sensitive]\n");
+		}
+		
+
+    } while (1);
 }
 
-int readFile(char *fileName, Customer **tempCustomer){
- FILE *file = fopen(fileName, "r");
+int readFile(char *fileName, Customer **customerMaximum){
+  FILE *file = fopen(fileName, "r");
 
- struct stat fileStat;
- fstat(fileno(file), &fileStat);
+	struct stat st;
+	fstat(fileno(file), &st);
+	char* fileContent = (char*)malloc(((int)st.st_size+1)* sizeof(char));
+	fileContent[0]='\0';
 
- char *fileContent = (char*) malloc(((int)fileStat.st_size + 1) * sizeof(char));
- fileContent[0] = '\0';
+	if (file != NULL)
+	{
+		char str[1000]; //string buffer
+		while (fgets(str, sizeof(str), file) != NULL) //read lines
+		{
 
- //Reading the file
- if (file == NULL){
- printf("The file cannot be open");
- return -1;
- }
- else{
- char *stringBuf;
- while(fgets(stringBuf, sizeof(stringBuf), file) != NULL){
- strncat(fileContent, stringBuf, sizeof(stringBuf));
- }
- fclose(file);
- }
+            strncat(fileContent,str,strlen(str));
+			
+		}
+		fclose(file);
 
- char *temp;
- int numOfCustomers;
+		
+
+	}
+	else
+	{
+		perror(fileName); //error
+        return -1;
+	}
+	char* command = NULL;
+	int customerCount;
+
+	char* fileCopy = (char*)malloc((strlen(fileContent)+1)*sizeof(char));
+	strcpy(fileCopy,fileContent);
+	command = strtok(fileCopy,"\r\n");
+	while(command!=NULL)
+	{
+		customerCount++;
+		command = strtok(NULL,"\r\n");
+	}
+	*customerMaximum = (Customer*) malloc(sizeof(Customer)*customerCount);
+
+	char* lines[customerCount];
+	command = NULL;
+	int i=0;
+	command = strtok(fileContent,"\r\n");
+	while(command!=NULL)
+	{
+		lines[i] = malloc(sizeof(command)*sizeof(char));
+		strcpy(lines[i],command);
+		i++;
+		command = strtok(NULL,"\r\n");
+	}
+
+	for(int k=0; k<customerCount; k++)
+	{
+		char* token = NULL;
+		int j = 0;
+		int cID=0;
+		token =  strtok(lines[k],",");
+		while(token!=NULL)
+		{
+			switch(j){
+				(*customerMaximum)[k].customerID = cID;
+				cID++;
+				case 0:
+					(*customerMaximum)[k].type1 = atoi(token);
+					break;
+				case 1:
+					(*customerMaximum)[k].type2 = atoi(token);
+					break;
+				case 2:
+					(*customerMaximum)[k].type3 = atoi(token);
+					break;
+				default:
+					(*customerMaximum)[k].type4 = atoi(token);
+					
+			}
+			
+			j++;
+			token = strtok(NULL,",");
+		}
+	}
+	return customerCount;
 }
 
 void allocateResources(int custID, int type_1, int type_2, int type_3, int type_4, int customerCount){
