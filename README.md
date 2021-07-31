@@ -5,6 +5,56 @@ CP386 Assignment4
 This project is a part of an assignment of Operating System course(CP 386).
 
 ## INSTALLATION
+1. Clone this repo.
+
+2. Transfer code to your VM.
+
+3. Use Makefile command "make".
+
+4. Run using "./Question1 X X X X"  --replace X X X X with the Max Resources you desire.
+
+5. Request resources using "RQ X X X X"
+
+6. Release using "RL X X X X"
+
+## SCREENSHOTS
+
+![Screenshot1](/images/Capture.JPG "Program Start")
+
+![Screenshot2](/images/Capture1.JPG "use of RQ, RL and *")
+
+![Screenshot3](/images/Capture2.JPG "Run command")
+
+## CONTRIBUTION (Per Function)
+```
+int main(int argc, char *argv[]); //Kush
+int readFile(char *fileName, Customer **tempCustomer); //Aryan
+void allocateResources(int custID, int type_1, int type_2, int type_3, int type_4, int customerCount); //Kush
+void releaseResources(int custID, int type_1, int type_2, int type_3, int type_4); //Aryan
+int safetyAlgorithm(int numOfCustomers); //Aryan
+void outputValues(int numOfCustomers); //Kush
+void runBankerAlgo(int numOfCustomers); //Kush
+void *runThread(void *thread); //Aryan
+```
+
+## FEATURES
+
+1. Able to request and release resource accurately.
+2. Able to show current available resources.
+
+## TESTS
+
+Above screenshot show a sample test case
+
+## USE EXAMPLES
+
+RQ: Request Resource
+RL: Release Resource
+* : Show current resources
+RUN: Run safety Algorithm and find Safe sequence
+exit: Stop the program
+
+All commands are case sensitive 
 
 ## AUTHORS
 
