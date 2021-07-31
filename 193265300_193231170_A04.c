@@ -10,6 +10,8 @@ GitHub Username: AryanAmin
 Name: Kush Rabadia Nanji
 Student ID: 193231170
 GitHub Username: KushRabadia
+
+https://github.com/AryanAmin/CP386_Assignment4
 */
 
 #include <stdlib.h>
